@@ -23,12 +23,12 @@ def create_default_tables():
 
     # Create the project_list table
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS project_list (
-            id INTEGER PRIMARY KEY,
-            project_name TEXT NOT NULL,
-            project_description TEXT,
-            date_created DATETIME,
-        )
+    CREATE TABLE IF NOT EXISTS project_list (
+    id INTEGER PRIMARY KEY,
+    project_name TEXT NOT NULL,
+    project_description TEXT,
+    date_created DATETIME
+    )
     """)
 
     # Create the tasks_list table
