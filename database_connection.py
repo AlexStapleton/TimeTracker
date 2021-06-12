@@ -2,10 +2,11 @@
 
 import sqlite3
 
+db_name = "main.db"
 
 def db_connection():
     """Use to connect to the database and create a cursor"""
-    connection = sqlite3.connect(database_name)
+    connection = sqlite3.connect(db_name)
     cursor = connection.cursor()
     return [connection, cursor]
 
@@ -20,28 +21,25 @@ def create_default_tables():
     connection = con[0]
     cursor = con[1]
 
-    # Create the master tracker database
+    # Create the project_list table
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS master_tracker (
+        CREATE TABLE IF NOT EXISTS project_list (
             id INTEGER PRIMARY KEY,
-            trackertype TEXT NOT NULL,
-            trackername TEXT NOT NULL,
-            trackerdesc TEXT,
-            dateadded DATETIME,
-            state INTEGER NOT NULL
+            project_name TEXT NOT NULL,
+            project_description TEXT,
+            date_created DATETIME,
         )
     """)
 
-    # Create the trackers transaction database
+    # Create the tasks_list table
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tracker_transactions (
+        CREATE TABLE IF NOT EXISTS tasks_list (
             id INTEGER PRIMARY KEY,
-            trackerid INTEGER NOT NULL,
-            date DATETIME,
-            num_val DOUBLE,
-            bool_val INTEGER,
-            string_val TEXT,
-            FOREIGN KEY (trackerid) REFERENCES master_tracker (id)
+            task_name TEXT NOT NULL,
+            project_id INTEGER,
+            start_time DATETIME,
+            end_time DATETIME,
+            FOREIGN KEY (project_id) REFERENCES project_list (id)
         )
     """)
 
