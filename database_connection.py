@@ -77,34 +77,40 @@ def create_default_tables():
     connection.commit()
 
 
-#----------#----------#---------#----------#
+#----------#----------#---------#----------#----------#----------#----------#
 # Creating and managing tasks, projects, and time entries
 
 # Create a new task
-def create_task(task_info: dict):
+def create_task(ui_task_info: dict):
     """ Creates a task in the task_list table with 7 attributes
     - 1 required field (name), 4 optional, 2 managed by program (date_created, completed status)
     - task_id is handled by sql via autoincrement
     - Inserts the value into the task_list table.
     - Returns the ID of the newly created task """
 
+    # Initiate the connection
+    con = db_connection()
+    connection = con[0]
+    cursor = con[1]
+
     # Program managed values
     d_c = timer_functions.current_datetime()
     c_s = False
 
     # Parse task_info dictionary information
-    task_name = task_info["ui_ti"]
-    project_id =
-    task_description = task_info["ui_td"]
-    due_date =
-    estimated time =
+    t_n = ui_task_info['task_name']
+    p_id = 1
+    t_d = ui_task_info['task_desc']
+    d_d = 0
+    e_t = 0
 
     # Write the task to the database
     cursor.execute("""
         INSERT INTO task_list
-            (task_name, project_id, task_description, due_date, estimated_time, date_created, completed_state)
-            VALUES (?, ?, ?, ?, ?, ?)""", (task_name, project_id, task_description, due_date, estimated_time, d_c, c_s))
-    """)
+            (task_name, project_id, task_description, due_date, estimated_time,
+            date_created, completed_state)
+            VALUES (?, ?, ?, ?, ?, ?, ?)""",
+            (t_n, p_id, t_d, d_d, e_t, d_c, c_s))
 
     connection.commit()
 

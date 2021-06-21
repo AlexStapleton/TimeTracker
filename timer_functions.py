@@ -7,7 +7,7 @@ def current_datetime():
     """Returns the current datetime"""
     return datetime.datetime.now()
 
-def time_difference(start: datetime.datetime, end: datetime.datetime): -> bool
+def time_difference(start: datetime.datetime, end: datetime.datetime) -> bool:
     """Takes two datetime objects and returns the difference.
     If the difference is negative, will return 'False' """
 
