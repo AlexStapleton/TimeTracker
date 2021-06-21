@@ -44,3 +44,8 @@ def create_default_tables():
     """)
 
     connection.commit()
+
+def create_task(name):
+    """Creates the task and requires a name. Other values
+    can be added / edited afterwards"""
+    
