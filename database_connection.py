@@ -39,6 +39,7 @@ def create_default_tables():
     # - completed_state: T/F for if a task is completed (F = not complete,
     # T = complete) which drives whether the task appears in the list of tasks.
 
+    # Create the task_list
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS task_list (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,6 +61,7 @@ def create_default_tables():
             task_id INTEGER,
             start_time DATETIME,
             end_time DATETIME,
+            elapsed_time FLOAT,
             FOREIGN KEY (task_id) REFERENCES task_list (id)
         )
     """)
@@ -70,7 +72,8 @@ def create_default_tables():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             project_name TEXT NOT NULL,
             project_description TEXT,
-            date_created DATETIME
+            date_created DATETIME,
+            project_due_date DATETIME
         )
     """)
 
@@ -83,9 +86,11 @@ def create_default_tables():
 # Create a new task
 def create_task(ui_task_info: dict):
     """ Creates a task in the task_list table with 7 attributes
-    - 1 required field (name), 4 optional, 2 managed by program (date_created, completed status)
+    - 1 required field (name)
+    - 4 optional
+    - 2 managed by program (date_created, completed status)
     - task_id is handled by sql via autoincrement
-    - Inserts the value into the task_list table.
+    - Inserts the entry into the task_list table.
     - Returns the ID of the newly created task """
 
     # Initiate the connection
@@ -114,10 +119,28 @@ def create_task(ui_task_info: dict):
 
     connection.commit()
 
-    #Return Task id
+def log_time_entry(time_dict: dict):
+    """ Takes a dictionary of values for a time_entry and writes it to
+    the time_log table.
+    """
+    # Initiate the connection
+    con = db_connection()
+    connection = con[0]
+    cursor = con[1]
 
+    t_id = time_dict['task_id']
+    s_t = time_dict['start_time']
+    e_t = time_dict['end']
+    el_t = time_dict['elapsed_time']
 
+    # Write the task to the database
+    cursor.execute("""
+        INSERT INTO time_log
+            (task_id, start_time, end_time, elapsed_time)
+            VALUES (?, ?, ?, ?)""",
+            (t_id, s_t, e_t, el_t))
 
+    connection.commit()
 
 
 # TO DO
