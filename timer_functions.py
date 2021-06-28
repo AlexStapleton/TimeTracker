@@ -17,7 +17,7 @@ def time_entry(starttime, endtime, taskid = 0) -> dict:
     """Creates the dictionary of the time_log. Pass this dict to
     database_connections.log_time_entry to be written to the databases."""
 
-    time_entry_dict = {task_id: 0, start_time: starttime, end_time: endtime}
+    time_entry_dict = {'task_id': taskid, 'start_time': starttime, 'end_time': endtime}
 
     return time_entry_dict
 

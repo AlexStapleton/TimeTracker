@@ -119,6 +119,13 @@ def create_task(ui_task_info: dict):
 
     connection.commit()
 
+# def edit_task(taskid):
+#(i.e. how do add a task to a project after it's been created, or update the due date)
+
+# def create_project(ui_project_info: dict):
+
+# def edit_project(projectid):
+
 def log_time_entry(time_dict: dict):
     """ Takes a dictionary of values for a time_entry and writes it to
     the time_log table.
@@ -130,7 +137,7 @@ def log_time_entry(time_dict: dict):
 
     t_id = time_dict['task_id']
     s_t = time_dict['start_time']
-    e_t = time_dict['end']
+    e_t = time_dict['end_time']
     el_t = time_dict['elapsed_time']
 
     # Write the task to the database
@@ -142,10 +149,12 @@ def log_time_entry(time_dict: dict):
 
     connection.commit()
 
+# def edit_time_entry(taskid,timelogid):
+
+
 
 # TO DO
 
 # Managing entries in database
 ## Function for removing a Project
 ## Function to remove a task
-## Function to update the attributes of a Task (i.e. how do add a task to a project after it's been created, or update the due date)
