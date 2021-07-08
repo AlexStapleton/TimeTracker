@@ -2,19 +2,18 @@
 
 # Python Standard Library packages
 import sqlite3
+from typing import Dict
 
 # Program Functions
-import support_functions
-import timer_functions
-import user_interaction
+import config
+#import support_functions
+#import timer_functions
+#import user_interaction
 
-
-# MOVE TO SEPARATE CONFIG
-db_name = "main.db"
 
 def db_connection():
     """Use to connect to the database and create a cursor"""
-    connection = sqlite3.connect(db_name)
+    connection = sqlite3.connect(config.db_fullname)
     cursor = connection.cursor()
     return [connection, cursor]
 
@@ -44,12 +43,12 @@ def create_default_tables():
         CREATE TABLE IF NOT EXISTS task_list (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             task_name TEXT NOT NULL,
-            project_id INTEGER,
+            project_id INTEGER DEFAULT NULL,
             task_description TEXT,
             due_date DATETIME,
             estimated_time DATETIME,
             date_created DATETIME,
-            completed_state BOOL,
+            completed_state BOOL DEFAULT FALSE,
             FOREIGN KEY (project_id) REFERENCES project_list (id)
         )
     """)
@@ -62,6 +61,7 @@ def create_default_tables():
             start_time DATETIME,
             end_time DATETIME,
             elapsed_time FLOAT,
+            descr TEXT DEFAULT '',
             FOREIGN KEY (task_id) REFERENCES task_list (id)
         )
     """)
@@ -73,6 +73,7 @@ def create_default_tables():
             project_name TEXT NOT NULL,
             project_description TEXT,
             date_created DATETIME,
+            project_start_date DATETIME,
             project_due_date DATETIME
         )
     """)
@@ -85,48 +86,56 @@ def create_default_tables():
 
 # Create a new task
 def create_task(ui_task_info: dict):
-    """ Creates a task in the task_list table with 7 attributes
-    - 1 required field (name)
+    """ Creates a task in the task_list table with 7 attributes. Information is sent from user_interaction.ui_task().
+    - 1 required field (task_name)
     - 4 optional
-    - 2 managed by program (date_created, completed status)
+    - 2 managed by program (date_created, completed_status)
     - task_id is handled by sql via autoincrement
     - Inserts the entry into the task_list table.
-    - Returns the ID of the newly created task """
+    - Returns the ID of the newly created task
+    """
 
     # Initiate the connection
     con = db_connection()
     connection = con[0]
     cursor = con[1]
 
-    # Program managed values
-    d_c = timer_functions.current_datetime()
-    c_s = False
 
     # Parse task_info dictionary information
-    t_n = ui_task_info['task_name']
-    p_id = 1
-    t_d = ui_task_info['task_desc']
-    d_d = 0
-    e_t = 0
+    t_n = ui_task_info.get('task_name', '')  # Required - Task Name
+    p_id = ui_task_info.get('project_id', '')  # Not required - defaults to Null
+    t_d = ui_task_info.get('task_desc', '')  # Not required - defaults to Null
+    d_d = ui_task_info.get('due_date', None)  # Not required - defaults to None
+    e_t = ui_task_info.get('estimated_time', '')  # Not required - defaults to None
+    d_c = ui_task_info.get('date_created')  # Set by user_interaction.ui_task()
+    c_s = ui_task_info.get('completed_state') # Set by user_interaction.ui_task()
 
     # Write the task to the database
     cursor.execute("""
         INSERT INTO task_list
-            (task_name, project_id, task_description, due_date, estimated_time,
-            date_created, completed_state)
+            (task_name, task_description, project_id, due_date, estimated_time, date_created, completed_state)
             VALUES (?, ?, ?, ?, ?, ?, ?)""",
-            (t_n, p_id, t_d, d_d, e_t, d_c, c_s))
+            (t_n, t_d, p_id, d_d, e_t, d_c, c_s))
 
     connection.commit()
 
-# def edit_task(taskid):
-#(i.e. how do add a task to a project after it's been created, or update the due date)
+# TODO def edit_task(taskid):
+
+def edit_task(task_id):
+    """Dictionary input containing the task to update and the fields to update. This is used to update the attributes
+    of a task once it's already been created.
+    """
+    # Initiate the connection
+    con = db_connection()
+    connection = con[0]
+    cursor = con[1]
+
 
 # def create_project(ui_project_info: dict):
 
 # def edit_project(projectid):
 
-def log_time_entry(time_dict: dict):
+def log_time_entry(time_dict: Dict):
     """ Takes a dictionary of values for a time_entry and writes it to
     the time_log table.
     """
@@ -135,26 +144,25 @@ def log_time_entry(time_dict: dict):
     connection = con[0]
     cursor = con[1]
 
-    t_id = time_dict['task_id']
+    t_id = time_dict.get('task_id', "")  # Not required - defaults to Null
     s_t = time_dict['start_time']
-    e_t = time_dict['end_time']
-    el_t = time_dict['elapsed_time']
+    e_t = time_dict.get('end_time')
+    el_t = time_dict.get('elapsed_time')
+    t_desc = time_dict.get('descr')
 
     # Write the task to the database
     cursor.execute("""
         INSERT INTO time_log
-            (task_id, start_time, end_time, elapsed_time)
-            VALUES (?, ?, ?, ?)""",
-            (t_id, s_t, e_t, el_t))
+            (task_id, start_time, end_time, elapsed_time, descr)
+            VALUES (?, ?, ?, ?, ?)""", (t_id, s_t, e_t, el_t, t_desc))
 
     connection.commit()
 
+
 # def edit_time_entry(taskid,timelogid):
 
-
-
-# TO DO
-
+# To do Items
 # Managing entries in database
-## Function for removing a Project
-## Function to remove a task
+# TODO Function for removing a Project and removing a task
+# TODO function for updating the attributes of a project
+# TODO function for updating the attributes of a task

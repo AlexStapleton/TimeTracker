@@ -1,6 +1,10 @@
-# Contains the code for managing time
+# Helper functions for handling datetime
 
+# Python Standard Library packages
 import datetime
+
+# Program Functions
+import config
 
 
 def current_datetime():
@@ -27,3 +31,16 @@ def convert_timedelta(td) -> float:
 
     total = (td.days * 24 * 60 * 60) + td.seconds + (td.microseconds / 1000000)
     return total
+
+def convert_string_to_datetime(date, time = config.convert_time_default) -> datetime.datetime:
+    """
+    Takes two variables, date and time, and returns a single datetime object. Date is required, time is not required
+    and will default according to the variable convert_time_default in config.py.
+    :param date: formatted as month/day/year (full year, not just last two numbers I.e. 2021, not 21)
+    :param time: formatted in 24h time. ex. 13:45
+    :return: the date and time combined into a single datetime object
+    """
+    dt_converted = date + " " + time
+    dt_converted = datetime.datetime.strptime(dt_converted, '%m/%d/%Y %H:%M')  #TODO Change the date and time formats to pull from config.py
+
+    return dt_converted
