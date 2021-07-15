@@ -2,13 +2,11 @@
 """Timetracker program"""
 
 # Python Standard Library packages
-import datetime
+# import datetime
 # import time
 # Program specific functions
 import database_connection
-import timer_functions
 import user_interaction
-# import support_functions
 
 
 # Initial startup of the program

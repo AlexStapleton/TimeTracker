@@ -6,7 +6,7 @@ from typing import Dict
 
 # Program Functions
 import config
-#import support_functions
+import support_functions
 #import timer_functions
 #import user_interaction
 
@@ -158,6 +158,34 @@ def log_time_entry(time_dict: Dict):
 
     connection.commit()
 
+
+def pull_tasks(completed = 0, project_id = ""):
+    """Grabs from the database the ID and Name of each task from the task_list table.
+    - Defaults to all active tasks.
+    - Can pass a project ID number to only pull tasks from that project.
+    - Returns a dictionary with the keys as the task_ids and the values as the name.
+    """
+
+    # Initiate the connection
+    con = db_connection()
+    connection = con[0]
+    connection.row_factory = support_functions.dict_factory
+    cursor = con[1]
+
+    # TODO if there is a project, need to check to make sure that project exists
+
+    # Two different queries can be created based on if a project id is given
+    if project_id != '':
+        pass  # TODO need to create a join with the projects table to create the correct query
+    else:
+        querey = "SELECT id, task_name FROM task_list WHERE completed_state = %s" %completed
+    cursor.execute(querey)
+
+    # Write cursor contents to the variable t_list using the .fetchall() method of cursor
+    t_dict = dict(cursor.fetchall())
+
+    connection.commit()
+    return t_dict
 
 # def edit_time_entry(taskid,timelogid):
 
